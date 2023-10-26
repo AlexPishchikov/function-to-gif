@@ -1,5 +1,5 @@
 mod plotter;
-use plotter::{PlotParameters, GifParameters, draw};
+use plotter::{PlotParameters, GifParameters, generate_gif};
 
 fn main() {
     let plots = PlotParameters {
@@ -35,5 +35,5 @@ fn main() {
         output_file_name : "example.gif"
     };
 
-    draw(&plots, &gif);
+    generate_gif(&plots, &gif);
 }

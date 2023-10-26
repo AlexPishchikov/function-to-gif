@@ -31,7 +31,7 @@ fn main() {
         height : 500,
         fps : 50,
         frames_count : (209 - 33) / 2, // set «(x_end - x_start - 1) * 1 / offset_by_frame» for perfect loop for periodic functions with period equals «(x_end - x_start)»
-        background_color : "#000000",
+        background_color : "#0D1117",
         output_file_name : "example.gif"
     };
 

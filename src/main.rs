@@ -1,8 +1,8 @@
 mod plotter;
-use plotter::{PlotParameters, GifParameters, generate_gif};
+
 
 fn main() {
-    let plots = PlotParameters {
+    let plots = plotter::structs::PlotParameters {
         function : vec![
                         "2.9 * sin(x / 10) * (sin(pi * (x + t) - 3) + cos(-3 * (x + t) + pi))",
                         "6 * abs(cos((x + t - 10) / 14.1 + pi))",
@@ -26,7 +26,7 @@ fn main() {
         max_y : 6.8,
     };
 
-    let gif = GifParameters {
+    let gif = plotter::structs::GifParameters {
         width : 100,
         height : 500,
         fps : 50,
@@ -35,5 +35,5 @@ fn main() {
         output_file_name : "example.gif"
     };
 
-    generate_gif(&plots, &gif);
+    plotter::generate_gif(&plots, &gif);
 }

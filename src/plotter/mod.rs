@@ -1,31 +1,12 @@
 use gnuplot::*;
-use meval::Expr;
 use std::process;
 use std::io::Write;
 use std::fs::{File, create_dir_all, remove_file, remove_dir_all};
 
-pub struct PlotParameters<'a> {
-    pub function : Vec<&'a str>,
-    pub line_color : Vec<&'a str>,
-    pub lines_width : f64,
-    pub function_step : f64,
-    pub offset_by_frame : f64,
-    pub x_start : f64,
-    pub x_end : f64,
-    pub min_y : f64,
-    pub max_y : f64,
-}
+pub mod structs;
 
-pub struct GifParameters<'a> {
-    pub width : u32,
-    pub height : u32,
-    pub fps : u32,
-    pub frames_count : i32,
-    pub background_color : &'a str,
-    pub output_file_name : &'a str,
-}
 
-pub fn generate_gif(plots : &PlotParameters, gif : &GifParameters) {
+pub fn generate_gif(plots : &structs::PlotParameters, gif : &structs::GifParameters) {
     let mut list = File::create("plots_list.txt").expect("error");
     create_dir_all("plots/");
 
@@ -54,7 +35,7 @@ pub fn generate_gif(plots : &PlotParameters, gif : &GifParameters) {
     remove_dir_all("plots");
 }
 
-fn generate_frame(plots : &PlotParameters, gif : &GifParameters, k : i32) {
+fn generate_frame(plots : &structs::PlotParameters, gif : &structs::GifParameters, k : i32) {
     let mut xs : Vec<f64> = Vec::new();
     let mut ys : Vec<Vec<f64>> = Vec::new();
     let mut fg = Figure::new();

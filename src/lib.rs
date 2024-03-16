@@ -1,7 +1,9 @@
 use gnuplot::*;
-use std::process;
-use std::io::Write;
+use std::cmp::{min};
 use std::fs::{File, create_dir_all, remove_file, remove_dir_all};
+use std::io::Write;
+use std::process;
+use std::thread;
 
 pub mod structs;
 
@@ -10,12 +12,23 @@ pub fn generate_gif(plots : &structs::PlotParameters, gif : &structs::GifParamet
     let mut list = File::create("plots_list.txt").expect("error");
     create_dir_all("plots/");
 
+    let threads_count : usize = thread::available_parallelism().unwrap().get();
+
+    for k in (0..gif.frames_count).step_by(threads_count) {
+        thread::scope(|scope| {
+            for i in 0..min(threads_count, gif.frames_count - k) {
+                scope.spawn(move || {
+                    generate_frame(plots, gif, k + i);
+                });
+            }
+        });
+    }
+
     for k in 0..gif.frames_count {
-        generate_frame(&plots, &gif, k);
         writeln!(&mut list, "plots/plot{}.svg", k);
     }
 
-    println!("{}", "frames generated");
+    println!("frames generated");
 
     process::Command::new("convert")
         .arg("-delay")
@@ -35,7 +48,7 @@ pub fn generate_gif(plots : &structs::PlotParameters, gif : &structs::GifParamet
     remove_dir_all("plots");
 }
 
-fn generate_frame(plots : &structs::PlotParameters, gif : &structs::GifParameters, k : i32) {
+fn generate_frame(plots : &structs::PlotParameters, gif : &structs::GifParameters, k : usize) {
     let mut xs : Vec<f64> = Vec::new();
     let mut ys : Vec<Vec<f64>> = Vec::new();
     let mut fg = Figure::new();
@@ -64,7 +77,7 @@ fn generate_frame(plots : &structs::PlotParameters, gif : &structs::GifParameter
             .set_margins(&[gnuplot::MarginLeft(0.0), gnuplot::MarginRight(gif.width as f32), gnuplot::MarginTop(0.0), gnuplot::MarginBottom(gif.height as f32)]);
     }
 
-    let save_plot = fg.save_to_svg(format!("plots/plot{}.svg", k), gif.height, gif.width);
+    let save_plot = fg.save_to_svg(format!("plots/plot{}.svg", k), gif.height as u32, gif.width as u32);
     match save_plot {
         Ok(_) => {},
         Err(save_plot) => {

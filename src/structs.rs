@@ -1,8 +1,8 @@
 pub struct GifParameters<'a> {
-    pub width : u32,
-    pub height : u32,
-    pub fps : u32,
-    pub frames_count : i32,
+    pub width : usize,
+    pub height : usize,
+    pub fps : usize,
+    pub frames_count : usize,
     pub background_color : &'a str,
     pub output_file_name : &'a str,
 }

@@ -31,7 +31,7 @@ fn main() {
         width : 100,
         height : 830,
         fps : 50,
-        frames_count : (209 - 33) / 2, // set «(x_end - x_start - 1) * 1 / offset_by_frame» for perfect loop for periodic functions with period equals «(x_end - x_start)»
+        frames_count : (plots.x_end - plots.x_start - 1.0) as usize / 2, // set «(x_end - x_start - 1) * 1 / offset_by_frame» for perfect loop for periodic functions with period equals «(x_end - x_start)»
         background_color : "#0D1117",
         output_file_name : "../example0.gif"
     };
@@ -65,7 +65,7 @@ fn main() {
         width : 200,
         height : 830,
         fps : 50,
-        frames_count : -((2.0 - 8.3) * 20.0) as i32,
+        frames_count : ((plots.x_end - plots.x_start) * 10.0) as usize - 1,
         background_color : "#0D1117",
         output_file_name : "../example1.gif"
     };

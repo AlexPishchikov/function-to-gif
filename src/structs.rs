@@ -1,3 +1,5 @@
+use crate::enums::PlotType;
+
 pub struct GifParameters<'a> {
     pub width : usize,
     pub height : usize,
@@ -8,9 +10,12 @@ pub struct GifParameters<'a> {
 }
 
 pub struct PlotParameters<'a> {
-    pub function : Vec<&'a str>,
-    pub line_color : Vec<&'a str>,
-    pub lines_width : f64,
+    pub function : &'a str,
+    pub color : &'a str,
+    pub plot_type : PlotType,
+    pub line_width : f64,
+    pub point_size : f64,
+    pub point_symbol : char,
     pub function_step : f64,
     pub offset_by_frame : f64,
     pub x_start : f64,

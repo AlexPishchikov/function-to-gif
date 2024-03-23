@@ -64,6 +64,10 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
         .set_margins(&[gnuplot::MarginLeft(0.0), gnuplot::MarginRight(gif.width as f32), gnuplot::MarginTop(0.0), gnuplot::MarginBottom(gif.height as f32)]);
 
     let max_step = plots.iter().max_by(|a, b| (a.function_step).partial_cmp(&b.function_step).unwrap()).unwrap().function_step;
+    let start = plots.iter().min_by(|a, b| (a.x_start).partial_cmp(&b.x_start).unwrap()).unwrap().x_start;
+    let end = plots.iter().max_by(|a, b| (a.x_end).partial_cmp(&b.x_end).unwrap()).unwrap().x_end;
+
+    axes.set_x_range(gnuplot::Fix(start), gnuplot::Fix(end));
 
     for i in 0..plots.len() {
         xs.push(Vec::new());
@@ -88,7 +92,6 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
             axes.lines_points(&xs[i], &ys[i], &[LineWidth(plots[i].line_width), PointSize(plots[i].point_size), PointSymbol(plots[i].point_symbol), Color(plots[i].color)]);
         }
 
-        axes.set_x_range(gnuplot::Fix(plots[i].x_start), gnuplot::Fix(plots[i].x_end));
         axes.set_y_range(gnuplot::Fix(plots[i].min_y), gnuplot::Fix(plots[i].max_y));
     }
 

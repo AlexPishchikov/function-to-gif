@@ -10,7 +10,6 @@ pub mod enums;
 
 
 pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifParameters) {
-    let mut list = File::create("plots_list.txt").expect("error");
     create_dir_all("plots/");
 
     let threads_count : usize = thread::available_parallelism().unwrap().get();
@@ -25,28 +24,25 @@ pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPa
         });
     }
 
-    for k in 0..gif.frames_count {
-        writeln!(&mut list, "plots/plot{}.svg", k);
-    }
-
     println!("frames generated");
 
-    process::Command::new("convert")
-        .arg("-delay")
-        .arg(format!("1x{}", gif.fps))
-        .arg("-background")
-        .arg(format!("{}", gif.background_color))
-        .arg("-loop")
-        .arg("0")
-        .arg("-dispose")
-        .arg("previous")
-        .arg("@plots_list.txt")
-        .arg(format!("{}", gif.output_file_name))
-        .status()
-        .expect("failed to execute process");
+    let mut cmd = process::Command::new("ffmpeg");
+    cmd.args(&["-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-framerate",
+            format!("{}", gif.fps).as_str(),
+            "-i",
+            "plots/plot%d.svg",
+            "-filter_complex",
+            format!("[0]split=2[bg][fg];[bg]drawbox=c={}@1:replace=1:t=fill[bg];[bg][fg]overlay=format=auto", gif.background_color).as_str(),
+            gif.output_file_name
+    ]);
 
-    remove_file("plots_list.txt");
-    remove_dir_all("plots");
+    cmd.status().expect("failed to execute process");
+
+    remove_dir_all("plots/");
 }
 
 fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifParameters, k : usize) {

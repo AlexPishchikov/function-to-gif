@@ -38,8 +38,8 @@ fn main() {
     }
 
     let gif = GifParameters {
-        width : 200,
-        height : 830,
+        width : 830,
+        height : 200,
         fps : 50,
         frames_count : ((plots[0].x_end - plots[0].x_start) * 10.0) as usize - 1,
         background_color : "#0D1117",

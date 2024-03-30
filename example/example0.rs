@@ -66,8 +66,8 @@ fn main() {
     }
 
     let gif = GifParameters {
-        width : 100,
-        height : 830,
+        width : 830,
+        height : 100,
         fps : 50,
         frames_count : ((plots[0].x_end - plots[0].x_start) / (3.57 * plots[0].offset_by_frame)) as usize, // set «(x_end - x_start - 1) * 1 / offset_by_frame»
                                                                                                            // for perfect loop for periodic functions with period equals «(x_end - x_start)»

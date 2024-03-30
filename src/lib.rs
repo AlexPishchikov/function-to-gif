@@ -91,7 +91,7 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
         axes.set_y_range(gnuplot::Fix(plots[i].min_y), gnuplot::Fix(plots[i].max_y));
     }
 
-    let save_plot = fg.save_to_svg(format!("plots/plot{}.svg", k), gif.height as u32, gif.width as u32);
+    let save_plot = fg.save_to_svg(format!("plots/plot{}.svg", k), gif.width as u32, gif.height as u32);
     match save_plot {
         Ok(_) => {},
         Err(save_plot) => {

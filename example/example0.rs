@@ -22,19 +22,11 @@ fn main() {
     ];
 
     let plot_types : Vec<PlotType> = vec![
-        PlotType::Lines,
-        PlotType::Points,
-        PlotType::Points,
-        PlotType::PointsLines,
-        PlotType::PointsLines,
-    ];
-
-    let sizes : Vec<(f64, f64)> = vec![
-        (2.0, 0.0),
-        (0.0, 1.0),
-        (0.0, 1.0),
-        (2.0, 0.8),
-        (2.0, 0.8),
+        PlotType::Lines { line_width : 2.0 },
+        PlotType::Points { point_size : 1.0, point_symbol : 'r' },
+        PlotType::Points { point_size : 1.0, point_symbol : 'r' },
+        PlotType::PointsLines { line_width : 2.0, point_size : 0.8, point_symbol : 'r' },
+        PlotType::PointsLines { line_width : 2.0, point_size : 0.8, point_symbol : 'r' },
     ];
 
     let steps : Vec<f64> = vec![
@@ -52,9 +44,6 @@ fn main() {
             function : functions[i],
             color : line_colors[i],
             plot_type : plot_types[i],
-            line_width : sizes[i].0,
-            point_size : sizes[i].1,
-            point_symbol : 'r',
             function_step : steps[i],
             offset_by_frame : 0.5,
             x_start : 0.0,

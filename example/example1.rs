@@ -23,10 +23,7 @@ fn main() {
         let plot = PlotParameters {
             function : functions[i],
             color : line_colors[i],
-            plot_type : PlotType::Lines,
-            line_width : 2.0,
-            point_size : 0.0,
-            point_symbol : '.',
+            plot_type : PlotType::Lines { line_width : 2.0 },
             function_step : 0.04,
             offset_by_frame : 0.1,
             x_start : 0.0,

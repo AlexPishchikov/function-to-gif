@@ -78,14 +78,28 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
             x += plots[i].function_step;
         }
 
-        if plots[i].plot_type == enums::PlotType::Lines {
-            axes.lines(&xs[i], &ys[i], &[LineWidth(plots[i].line_width), Color(plots[i].color)]);
-        }
-        if plots[i].plot_type == enums::PlotType::Points {
-            axes.points(&xs[i], &ys[i], &[PointSize(plots[i].point_size), PointSymbol(plots[i].point_symbol), Color(plots[i].color)]);
-        }
-        if plots[i].plot_type == enums::PlotType::LinesPoints || plots[i].plot_type == enums::PlotType::PointsLines {
-            axes.lines_points(&xs[i], &ys[i], &[LineWidth(plots[i].line_width), PointSize(plots[i].point_size), PointSymbol(plots[i].point_symbol), Color(plots[i].color)]);
+        match plots[i].plot_type {
+            enums::PlotType::Lines {line_width} => {
+                axes.lines(&xs[i], &ys[i], &[LineWidth(line_width),
+                                             Color(plots[i].color)]);
+            }
+            enums::PlotType::Points {point_size, point_symbol} => {
+                axes.points(&xs[i], &ys[i], &[PointSize(point_size),
+                                              PointSymbol(point_symbol),
+                                              Color(plots[i].color)]);
+            }
+            enums::PlotType::LinesPoints {line_width, point_size, point_symbol} => {
+                axes.lines_points(&xs[i], &ys[i], &[LineWidth(line_width),
+                                                    PointSize(point_size),
+                                                    PointSymbol(point_symbol),
+                                                    Color(plots[i].color)]);
+            }
+            enums::PlotType::PointsLines {line_width, point_size, point_symbol} => {
+                axes.lines_points(&xs[i], &ys[i], &[LineWidth(line_width),
+                                                    PointSize(point_size),
+                                                    PointSymbol(point_symbol),
+                                                    Color(plots[i].color)]);
+            }
         }
 
         axes.set_y_range(gnuplot::Fix(plots[i].min_y), gnuplot::Fix(plots[i].max_y));

@@ -26,21 +26,31 @@ pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPa
 
     println!("frames generated");
 
-    let mut cmd = process::Command::new("ffmpeg");
-    cmd.args(&["-y",
-            "-hide_banner",
-            "-loglevel",
-            "error",
-            "-framerate",
-            format!("{}", gif.fps).as_str(),
-            "-i",
-            "plots/plot%d.svg",
-            "-filter_complex",
-            format!("[0]split=2[bg][fg];[bg]drawbox=c={}@1:replace=1:t=fill[bg];[bg][fg]overlay=format=auto", gif.background_color).as_str(),
-            gif.output_file_name
+    let mut svg_to_png = process::Command::new("ffmpeg");
+    svg_to_png.args(&["-y",
+                      "-loglevel",
+                      "error",
+                      "-i",
+                      "plots/plot%d.svg",
+                      "-vf",
+                      format!("split[bg][fg];[bg]drawbox=c={}@1:replace=1:t=fill[bg];[bg][fg]overlay=format=auto", gif.background_color).as_str(),
+                      "plots/plot%d.png",
     ]);
+    svg_to_png.status().expect("failed to execute process");
 
-    cmd.status().expect("failed to execute process");
+    let mut png_to_gif = process::Command::new("ffmpeg");
+    png_to_gif.args(&["-y",
+                      "-loglevel",
+                      "error",
+                      "-framerate",
+                      format!("{}", gif.fps).as_str(),
+                      "-i",
+                      "plots/plot%d.png",
+                      "-vf",
+                      "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
+                      gif.output_file_name,
+    ]);
+    png_to_gif.status().expect("failed to execute process");
 
     remove_dir_all("plots/");
 }

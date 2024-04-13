@@ -61,7 +61,7 @@ fn main() {
         frames_count : ((plots[0].x_end - plots[0].x_start) / (3.57 * plots[0].offset_by_frame)) as usize, // set «(x_end - x_start - 1) * 1 / offset_by_frame»
                                                                                                            // for perfect loop for periodic functions with period equals «(x_end - x_start)»
         background_color : "#0D1117",
-        output_file_name : "../example0.gif"
+        output_file_name : "example1.gif"
     };
 
     generate_gif(&plots, &gif).unwrap();

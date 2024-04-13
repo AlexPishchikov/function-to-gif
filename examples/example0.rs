@@ -40,7 +40,7 @@ fn main() {
         fps : 50,
         frames_count : ((plots[0].x_end - plots[0].x_start) * 10.0) as usize - 1,
         background_color : "#0D1117",
-        output_file_name : "../example1.gif"
+        output_file_name : "example0.gif"
     };
 
     generate_gif(&plots, &gif).unwrap();

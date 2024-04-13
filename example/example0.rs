@@ -64,5 +64,5 @@ fn main() {
         output_file_name : "../example0.gif"
     };
 
-    generate_gif(&plots, &gif);
+    generate_gif(&plots, &gif).unwrap();
 }

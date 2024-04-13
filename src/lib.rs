@@ -1,7 +1,8 @@
 use gnuplot::*;
 use std::cmp::{min};
-use std::fs::{File, create_dir_all, remove_file, remove_dir_all};
-use std::io::Write;
+use std::error::Error;
+use std::fs;
+use std::io::ErrorKind;
 use std::process;
 use std::thread;
 
@@ -9,10 +10,30 @@ pub mod structs;
 pub mod enums;
 
 
-pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifParameters) {
-    create_dir_all("plots/");
+pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifParameters) -> Result<(), Box<dyn Error>> {
+    match fs::remove_dir_all("function-to-gif-temp-dir/") {
+        Ok(_) => {},
+        Err(clear_dir_error) => {
+            match clear_dir_error.kind() {
+                ErrorKind::NotFound => {},
+                _ => {
+                    return Err(Box::new(clear_dir_error));
+                },
+            }
+        },
+    }
 
-    let threads_count : usize = thread::available_parallelism().unwrap().get();
+    fs::create_dir_all("function-to-gif-temp-dir/")?;
+
+    let threads_count : usize =
+        match thread::available_parallelism() {
+            Ok(count) => {
+                count.get()
+            },
+            _ => {
+                1
+            },
+        };
 
     for k in (0..gif.frames_count).step_by(threads_count) {
         thread::scope(|scope| {
@@ -31,12 +52,12 @@ pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPa
                       "-loglevel",
                       "error",
                       "-i",
-                      "plots/plot%d.svg",
+                      "function-to-gif-temp-dir/plot%d.svg",
                       "-vf",
                       format!("split[bg][fg];[bg]drawbox=c={}@1:replace=1:t=fill[bg];[bg][fg]overlay=format=auto", gif.background_color).as_str(),
-                      "plots/plot%d.png",
+                      "function-to-gif-temp-dir/plot%d.png",
     ]);
-    svg_to_png.status().expect("failed to execute process");
+    svg_to_png.output()?;
 
     let mut png_to_gif = process::Command::new("ffmpeg");
     png_to_gif.args(&["-y",
@@ -45,14 +66,16 @@ pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPa
                       "-framerate",
                       format!("{}", gif.fps).as_str(),
                       "-i",
-                      "plots/plot%d.png",
+                      "function-to-gif-temp-dir/plot%d.png",
                       "-vf",
                       "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                       gif.output_file_name,
     ]);
-    png_to_gif.status().expect("failed to execute process");
+    png_to_gif.output()?;
 
-    remove_dir_all("plots/");
+    fs::remove_dir_all("function-to-gif-temp-dir/")?;
+
+    return Ok(());
 }
 
 fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifParameters, k : usize) {
@@ -115,7 +138,7 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
         axes.set_y_range(gnuplot::Fix(plots[i].min_y), gnuplot::Fix(plots[i].max_y));
     }
 
-    let save_plot = fg.save_to_svg(format!("plots/plot{}.svg", k), gif.width as u32, gif.height as u32);
+    let save_plot = fg.save_to_svg(format!("function-to-gif-temp-dir/plot{}.svg", k), gif.width as u32, gif.height as u32);
     match save_plot {
         Ok(_) => {},
         Err(save_plot) => {

@@ -56,8 +56,7 @@ pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPa
                       "-vf",
                       format!("split[bg][fg];[bg]drawbox=c={}@1:replace=1:t=fill[bg];[bg][fg]overlay=format=auto", gif.background_color).as_str(),
                       "function-to-gif-temp-dir/plot%d.png",
-    ]);
-    svg_to_png.output()?;
+    ]).output()?;
 
     let mut png_to_gif = process::Command::new("ffmpeg");
     png_to_gif.args(&["-y",
@@ -70,8 +69,7 @@ pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPa
                       "-vf",
                       "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                       gif.output_file_name,
-    ]);
-    png_to_gif.output()?;
+    ]).output()?;
 
     fs::remove_dir_all("function-to-gif-temp-dir/")?;
 
@@ -92,7 +90,6 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
         .set_border(false, &[], &[])
         .set_margins(&[gnuplot::MarginLeft(0.0), gnuplot::MarginRight(gif.width as f32), gnuplot::MarginTop(0.0), gnuplot::MarginBottom(gif.height as f32)]);
 
-    let max_step = plots.iter().max_by(|a, b| (a.function_step).partial_cmp(&b.function_step).unwrap()).unwrap().function_step;
     let start = plots.iter().min_by(|a, b| (a.x_start).partial_cmp(&b.x_start).unwrap()).unwrap().x_start;
     let end = plots.iter().max_by(|a, b| (a.x_end).partial_cmp(&b.x_end).unwrap()).unwrap().x_end;
 
@@ -105,7 +102,7 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
         let f = expr.bind2("x", "t").unwrap();
         let mut x : f64 = plots[i].x_start;
 
-        while x < plots[i].x_end + max_step {
+        while x < plots[i].x_end + plots[i].function_step {
             xs[i].push(x);
             ys[i].push(f(x, k as f64 * plots[i].offset_by_frame));
             x += plots[i].function_step;
@@ -138,12 +135,5 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
         axes.set_y_range(gnuplot::Fix(plots[i].min_y), gnuplot::Fix(plots[i].max_y));
     }
 
-    let save_plot = fg.save_to_svg(format!("function-to-gif-temp-dir/plot{}.svg", k), gif.width as u32, gif.height as u32);
-    match save_plot {
-        Ok(_) => {},
-        Err(save_plot) => {
-            eprintln!("{:?}", save_plot);
-            process::exit(1);
-        },
-    }
+    fg.save_to_svg(format!("function-to-gif-temp-dir/plot{}.svg", k), gif.width as u32, gif.height as u32).unwrap();
 }

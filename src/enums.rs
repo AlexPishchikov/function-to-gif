@@ -14,8 +14,8 @@ pub enum PlotType {
         point_symbol : char,
     },
     PointsLines {
-        point_size : f64,
         line_width : f64,
+        point_size : f64,
         point_symbol : char,
     },
 }

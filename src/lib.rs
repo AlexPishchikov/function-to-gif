@@ -118,12 +118,7 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
                                               PointSymbol(point_symbol),
                                               Color(plots[i].color)]);
             }
-            enums::PlotType::LinesPoints {line_width, point_size, point_symbol} => {
-                axes.lines_points(&xs[i], &ys[i], &[LineWidth(line_width),
-                                                    PointSize(point_size),
-                                                    PointSymbol(point_symbol),
-                                                    Color(plots[i].color)]);
-            }
+            enums::PlotType::LinesPoints {line_width, point_size, point_symbol} |
             enums::PlotType::PointsLines {line_width, point_size, point_symbol} => {
                 axes.lines_points(&xs[i], &ys[i], &[LineWidth(line_width),
                                                     PointSize(point_size),

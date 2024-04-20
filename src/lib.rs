@@ -12,15 +12,10 @@ pub mod enums;
 
 pub fn generate_gif(plots : &Vec<structs::PlotParameters>, gif : &structs::GifParameters) -> Result<(), Box<dyn Error>> {
     match fs::remove_dir_all("function-to-gif-temp-dir/") {
-        Ok(_) => {},
-        Err(clear_dir_error) => {
-            match clear_dir_error.kind() {
-                ErrorKind::NotFound => {},
-                _ => {
-                    return Err(Box::new(clear_dir_error));
-                },
-            }
+        Err(clear_dir_error) if clear_dir_error.kind() != ErrorKind::NotFound => {
+            return Err(Box::new(clear_dir_error));
         },
+        _ => {},
     }
 
     fs::create_dir_all("function-to-gif-temp-dir/")?;

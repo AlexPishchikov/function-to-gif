@@ -1,5 +1,15 @@
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy)]
+pub enum FillRegion {
+    Above {
+        alpha : f64,
+    },
+    Below {
+        alpha : f64,
+    },
+    None,
+}
 
+#[derive(Clone, Copy, PartialEq)]
 pub enum PlotType {
     Lines {
         line_width : f64,

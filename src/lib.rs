@@ -1,5 +1,5 @@
 use gnuplot::*;
-use std::cmp::{min};
+use std::cmp::min;
 use std::error::Error;
 use std::fs;
 use std::io::ErrorKind;
@@ -120,6 +120,20 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
                                                     PointSymbol(point_symbol),
                                                     Color(plots[i].color)]);
             }
+        }
+
+        match plots[i].fill_region {
+            enums::FillRegion::Above {alpha} => {
+                axes.fill_between(&xs[i], (0..xs[i].len()).map(|_| plots[i].max_y).into_iter().collect::<Vec<f64>>(), &ys[i], &[Color(plots[i].color),
+                                                                                                                                FillAlpha(alpha),
+                                                                                                                                FillRegion(Above)]);
+            }
+            enums::FillRegion::Below {alpha} => {
+                axes.fill_between(&xs[i], (0..xs[i].len()).map(|_| plots[i].min_y).into_iter().collect::<Vec<f64>>(), &ys[i], &[Color(plots[i].color),
+                                                                                                                                FillAlpha(alpha),
+                                                                                                                                FillRegion(Below)]);
+            }
+            enums::FillRegion::None => {}
         }
 
         axes.set_y_range(gnuplot::Fix(plots[i].min_y), gnuplot::Fix(plots[i].max_y));

@@ -1,7 +1,7 @@
 use std::f64::consts::PI;
 
 extern crate function_to_gif;
-use function_to_gif::{enums::PlotType, structs::GifParameters, structs::PlotParameters, generate_gif};
+use function_to_gif::{enums::{FillRegion, PlotType}, structs::{GifParameters, PlotParameters}, generate_gif};
 
 
 fn main() {
@@ -44,6 +44,7 @@ fn main() {
             function : functions[i],
             color : line_colors[i],
             plot_type : plot_types[i],
+            fill_region : FillRegion::None,
             function_step : steps[i],
             offset_by_frame : 0.5,
             x_start : 0.0,

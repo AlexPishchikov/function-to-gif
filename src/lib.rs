@@ -128,10 +128,36 @@ fn generate_frame(plots : &Vec<structs::PlotParameters>, gif : &structs::GifPara
                                                                                                                                 FillAlpha(alpha),
                                                                                                                                 FillRegion(Above)]);
             }
+            enums::FillRegion::AboveWithColor {alpha, color} => {
+                axes.fill_between(&xs[i], (0..xs[i].len()).map(|_| plots[i].max_y).into_iter().collect::<Vec<f64>>(), &ys[i], &[Color(color),
+                                                                                                                                FillAlpha(alpha),
+                                                                                                                                FillRegion(Above)]);
+            }
             enums::FillRegion::Below {alpha} => {
                 axes.fill_between(&xs[i], (0..xs[i].len()).map(|_| plots[i].min_y).into_iter().collect::<Vec<f64>>(), &ys[i], &[Color(plots[i].color),
                                                                                                                                 FillAlpha(alpha),
                                                                                                                                 FillRegion(Below)]);
+            }
+            enums::FillRegion::BelowWithColor {alpha, color} => {
+                axes.fill_between(&xs[i], (0..xs[i].len()).map(|_| plots[i].min_y).into_iter().collect::<Vec<f64>>(), &ys[i], &[Color(color),
+                                                                                                                                FillAlpha(alpha),
+                                                                                                                                FillRegion(Below)]);
+            }
+            enums::FillRegion::Between{alpha, index} => {
+                if index < i {
+                    axes.fill_between(&xs[i], &ys[index], &ys[i], &[Color(plots[i].color),
+                                                                    FillAlpha(alpha),
+                                                                    FillRegion(Above),
+                                                                    FillRegion(Between)]);
+                }
+            }
+            enums::FillRegion::BetweenWithColor{alpha, index, color} => {
+                if index < i {
+                    axes.fill_between(&xs[i], &ys[index], &ys[i], &[Color(color),
+                                                                    FillAlpha(alpha),
+                                                                    FillRegion(Above),
+                                                                    FillRegion(Between)]);
+                }
             }
             enums::FillRegion::None => {}
         }

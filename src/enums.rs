@@ -1,10 +1,27 @@
 #[derive(Clone, Copy)]
-pub enum FillRegion {
+pub enum FillRegion<'a> {
     Above {
         alpha : f64,
     },
+    AboveWithColor {
+        alpha : f64,
+        color : &'a str,
+    },
     Below {
         alpha : f64,
+    },
+    BelowWithColor {
+        alpha : f64,
+        color : &'a str,
+    },
+    Between {
+        alpha : f64,
+        index : usize,
+    },
+    BetweenWithColor {
+        alpha : f64,
+        index : usize,
+        color : &'a str,
     },
     None,
 }

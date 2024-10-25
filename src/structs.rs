@@ -13,7 +13,7 @@ pub struct PlotParameters<'a> {
     pub function : &'a str,
     pub color : &'a str,
     pub plot_type : PlotType,
-    pub fill_region : FillRegion,
+    pub fill_region : FillRegion<'a>,
     pub function_step : f64,
     pub offset_by_frame : f64,
     pub x_start : f64,

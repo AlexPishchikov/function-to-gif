@@ -14,11 +14,20 @@ pub enum FillRegion<'a> {
         alpha : f64,
         color : &'a str,
     },
-    Between {
+    BetweenAbove {
         alpha : f64,
         index : usize,
     },
-    BetweenWithColor {
+    BetweenAboveWithColor {
+        alpha : f64,
+        index : usize,
+        color : &'a str,
+    },
+    BetweenBelow {
+        alpha : f64,
+        index : usize,
+    },
+    BetweenBelowWithColor {
         alpha : f64,
         index : usize,
         color : &'a str,
